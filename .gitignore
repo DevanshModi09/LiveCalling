@@ -1,0 +1,13 @@
+server/node_modules/
+android/.gradle/
+android/build/
+android/local.properties
+android/app/build/
+dist/
+android/.kotlin/
+
+.env
+.env.*
+!.env.example
+*.jks
+*.keystore
