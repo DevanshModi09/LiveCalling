@@ -31,6 +31,7 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
     }
 }
+dependencies { testImplementation("junit:junit:4.13.2") }
 ```
 
 Ensure `com.android.library` is declared using the **same Android Gradle Plugin version as their host project**, and Kotlin compilation is enabled. AGP 9 has built-in Kotlin; AGP 8 projects need their existing Kotlin Android plugin applied to this library too. This standalone project was built with AGP 9.4.1 and SDK 37; different toolchains must be verified in the host project.
@@ -85,9 +86,9 @@ Without a reachable HTTPS service the app cannot call. Room URLs open in a brows
 
 ## 4. Model hook — leave empty for now
 
-The complete call feature works without a model. The reusable `WebRtcCallView` exposes `onRemotePcm16k: (FloatArray) -> Unit`. It emits the other participant's mono 16 kHz audio in 320-sample chunks. `LiveCallingActivity` deliberately leaves that callback empty.
+The complete call feature works without a model. The reusable `WebRtcCallView` exposes `onRemotePcm16k: (FloatArray) -> Unit`. It emits the other participant's mono 16 kHz audio in 320-sample chunks. `LiveCallingActivity` forwards that callback to a `StreamingDetector` with no adapter; only received-audio status is displayed. No model is loaded.
 
-When a model is chosen, enqueue the samples to a bounded background pipeline. Do not run inference on the JavaScript bridge thread. Adapt the sample rate and buffering to the chosen model. Do not score the local microphone or run a second microphone recorder alongside WebRTC.
+When a model is chosen, implement `DetectorAdapter` and use the supplied bounded `StreamingDetector` pipeline. See `STREAMING_REQUIREMENTS.md` and `evaluation/README.md`. Do not run inference on the JavaScript bridge thread. Adapt the sample rate and buffering to the chosen model. Do not score the local microphone or run a second microphone recorder alongside WebRTC.
 
 ## What this handoff does and does not include
 

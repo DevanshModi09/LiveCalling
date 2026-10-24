@@ -1,0 +1,17 @@
+{
+  "date": "2026-10-24",
+  "partial_base_samples": 100,
+  "fully_synthetic_base_samples": 10,
+  "genuine_base_samples": 10,
+  "genuine_splice_controls": 10,
+  "variants_per_base": 8,
+  "verified_audio_cases": 1040,
+  "unique_genuine_source_clips": 5,
+  "unique_synthetic_source_clips": 5,
+  "conditions": ["clean", "8khz", "mulaw", "opus", "noise10db", "gain025", "silence1s", "length10s"],
+  "integrity_checks_passed": true,
+  "model_loaded": false,
+  "model_accuracy_evaluated": false,
+  "target_phone_latency_evaluated": false,
+  "note": "Generated audio remains local and git-ignored. Deterministic fixture tests are software contract checks, not model evaluations."
+}

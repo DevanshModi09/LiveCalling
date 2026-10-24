@@ -1,5 +1,6 @@
 package com.vcd.calling
 
+import com.vcd.calling.detection.StreamingDetector
 import android.Manifest
 import android.app.Activity
 import android.content.Intent
@@ -19,6 +20,7 @@ import android.widget.*
 /** Standalone calling APK. No detector or inference runtime is installed. */
 open class LiveCallingActivity : Activity() {
     private var call: WebRtcCallView? = null
+    private var detector: StreamingDetector? = null
     private lateinit var address: EditText
     private lateinit var message: TextView
     private var pendingUrl: String? = null
@@ -52,6 +54,7 @@ open class LiveCallingActivity : Activity() {
     }
     private fun showSetup() {
         call?.close(); call = null
+        detector?.close(); detector = null
         val scroll = ScrollView(this).apply { setBackgroundColor(bg); isFillViewport = true }
         val column = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL; setPadding(dp(24), dp(24), dp(24), dp(24))
@@ -141,8 +144,18 @@ open class LiveCallingActivity : Activity() {
             setPadding(dp(16), dp(4), dp(16), dp(4))
         }
         frame.addView(stateLine)
+        val evidenceLine = text("Voice checks: no model connected", 12f, soft).apply {
+            setPadding(dp(16), dp(2), dp(16), dp(2))
+        }
+        frame.addView(evidenceLine)
+        detector = StreamingDetector(onUpdate = { update ->
+            runOnUiThread {
+                evidenceLine.text = String.format(java.util.Locale.US,
+                    "%.1f s received · No model connected", update.audioTimeS)
+            }
+        })
         call = WebRtcCallView(this, url,
-            onRemotePcm16k = { /* Intentionally empty: future model integration. */ },
+            onRemotePcm16k = { samples -> detector?.push(samples) },
             onState = { state -> stateLine.text = state })
         frame.addView(call!!.view, LinearLayout.LayoutParams(-1, 0, 1f))
         setContentView(frame)
@@ -154,5 +167,5 @@ open class LiveCallingActivity : Activity() {
     }
     @Deprecated("Legacy Activity back handling")
     override fun onBackPressed() { if (call != null) showSetup() else super.onBackPressed() }
-    override fun onDestroy() { call?.close(); call = null; super.onDestroy() }
+    override fun onDestroy() { call?.close(); call = null; detector?.close(); detector = null; super.onDestroy() }
 }

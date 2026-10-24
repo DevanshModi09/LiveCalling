@@ -2,6 +2,10 @@
 
 Two-person internet audio calls with room signaling, mute, hang-up, automatic echo cancellation, and a remote-audio hook for Voice Check. Independent of `android-app/`, `devansh/`, the existing PCM WebSocket relay, and detector weights. No current app screens or model are changed by this folder.
 
+## Streaming requirements
+
+The model slot remains empty. A model-neutral streaming engine now provides 500 ms audio-clock updates, explicit evidence states, bounded/skip-while-busy inference scheduling, timestamped 0.5 s bins, localisation and EMA display smoothing. See [STREAMING_REQUIREMENTS.md](STREAMING_REQUIREMENTS.md) for adapter interfaces, acceptance gates and honest validation status. [evaluation/](evaluation/README.md) builds and verifies at least 100 partial-fake audio cases plus codec, noise, 8 kHz and shortcut-control variants. These tools do not substitute for validating a replacement model.
+
 ## Teammate handoff
 
 Start with [INTEGRATION.md](INTEGRATION.md) to add the reusable calling Activity to an existing Android app. The sample APK is optional.
